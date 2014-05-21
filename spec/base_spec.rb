@@ -14,6 +14,7 @@ describe "Sensu::Extension::Base" do
   end
 
   it "can provide default method return values" do
+    @extension.post_init.should be_true
     @extension.name.should eq("base")
     @extension.description.should eq("extension description (change me)")
     @extension.definition.should eq({:type => "extension", :name => "base"})
