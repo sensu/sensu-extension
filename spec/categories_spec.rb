@@ -11,6 +11,16 @@ describe "Sensu::Extension::Generic" do
   end
 end
 
+describe "Sensu::Extension::Bridge" do
+  include Helpers
+
+  it "inherits Base" do
+    Sensu::Extension::Bridge.superclass.should eq(Sensu::Extension::Base)
+    extension = Sensu::Extension::Bridge.new
+    extension.should respond_to(:name, :description, :definition, :safe_run, :stop, :has_key?, :[])
+  end
+end
+
 describe "Sensu::Extension::Check" do
   include Helpers
 

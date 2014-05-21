@@ -1,5 +1,5 @@
 module Sensu
   module Extension
-    CATEGORIES = [:generics, :checks, :mutators, :handlers]
+    CATEGORIES = [:generics, :bridges, :checks, :mutators, :handlers]
   end
 end
