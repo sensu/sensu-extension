@@ -1,5 +1,6 @@
 require File.join(File.dirname(__FILE__), "helpers")
 require "sensu/extension"
+require "logger"
 
 describe "Sensu::Extension::Base" do
   include Helpers
@@ -16,6 +17,21 @@ describe "Sensu::Extension::Base" do
     @extension.name.should eq("base")
     @extension.description.should eq("extension description (change me)")
     @extension.definition.should eq({:type => "extension", :name => "base"})
+  end
+
+  it "can have a logger" do
+    @extension.logger = Logger.new("/dev/null")
+    @extension.logger.formatter = Proc.new do |severity, datetime, progname, message|
+      severity.should eq("INFO")
+      message.should eq("test")
+    end
+    @extension.logger.info("test")
+  end
+
+  it "can have settings" do
+    settings = {:foo => 1}
+    @extension.settings = settings
+    @extension.settings.should eq(settings)
   end
 
   it "can handle provided callbacks" do
