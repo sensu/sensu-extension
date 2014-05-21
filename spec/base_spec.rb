@@ -59,6 +59,17 @@ describe "Sensu::Extension::Base" do
     end
   end
 
+  it "can catch some run errors" do
+    async_wrapper do
+      @extension.safe_run do |output, status|
+        raise "boom" if status == 0
+        output.should eq("boom")
+        status.should eq(2)
+        async_done
+      end
+    end
+  end
+
   it "can provide hash like access to definition()" do
     @extension.has_key?(:type).should be_true
     @extension.has_key?(:name).should be_true
