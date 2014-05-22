@@ -15,10 +15,13 @@ module Sensu
       attr_accessor :settings
 
       # Initialize the extension, call post_init() when the
-      # eventmachine reactor starts up.
+      # eventmachine reactor starts up, stop() when it stops.
       def initialize
         EM.next_tick do
           post_init
+        end
+        EM.add_shutdown_hook do
+          stop
         end
       end
 
@@ -60,14 +63,10 @@ module Sensu
         callback.call("noop", 0)
       end
 
-      # Override this method to do something before Sensu stops, such
-      # as connection or file cleanup. You must yield or call the
-      # callback.
-      #
-      # @param callback [Proc] provided by Sensu, expecting to be
-      #   called.
-      def stop(&callback)
-        callback.call
+      # Override this method to do something when the eventmachine
+      # reactor stops, such as connection or file cleanup.
+      def stop
+        true
       end
 
       # Retrieve the definition object corresponding to a key, acting

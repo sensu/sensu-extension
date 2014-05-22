@@ -10,11 +10,12 @@ describe "Sensu::Extension::Base" do
   end
 
   it "can provide the extension API" do
-    @extension.should respond_to(:name, :description, :definition, :safe_run, :stop, :has_key?, :[])
+    @extension.should respond_to(:name, :description, :definition, :safe_run, :has_key?, :[])
   end
 
   it "can provide default method return values" do
     @extension.post_init.should be_true
+    @extension.stop.should be_true
     @extension.name.should eq("base")
     @extension.description.should eq("extension description (change me)")
     @extension.definition.should eq({:type => "extension", :name => "base"})
@@ -35,20 +36,30 @@ describe "Sensu::Extension::Base" do
     @extension.settings.should eq(settings)
   end
 
-  it "can handle provided callbacks" do
+  it "can run without data" do
     async_wrapper do
       callback = Proc.new do |output, status|
         output.should eq("noop")
         status.should eq(0)
-        @extension.stop do
-          async_done
-        end
+        async_done
       end
       @extension.run(&callback)
     end
   end
 
-  it "can pass event data to run" do
+  it "can run with event data" do
+    async_wrapper do
+      callback = Proc.new do |output, status|
+        output.should eq("noop")
+        status.should eq(0)
+        async_done
+      end
+      event = {:foo => 1}
+      @extension.run(event, &callback)
+    end
+  end
+
+  it "can pass duplicated event data to run" do
     async_wrapper do
       event = {:foo => 1}
       @extension.safe_run(event) do |output, status|
