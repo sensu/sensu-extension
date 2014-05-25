@@ -90,7 +90,6 @@ describe "Sensu::Extension::Base" do
 
   it "can provide a list of decendant classes" do
     expected = [
-      Sensu::Extension::Generic,
       Sensu::Extension::Bridge,
       Sensu::Extension::Check,
       Sensu::Extension::Mutator,
