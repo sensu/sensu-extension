@@ -98,7 +98,9 @@ module Sensu
         begin
           data ? run(data.dup, &callback) : run(&callback)
         rescue => error
-          callback.call(error.to_s, 2)
+          klass = error.class.name
+          backtrace = error.backtrace.map { |x| "\tfrom #{x}" }.join("\n")
+          callback.call("#{klass}: #{error}\n#{backtrace}", 2)
         end
       end
 
