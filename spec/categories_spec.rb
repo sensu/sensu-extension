@@ -21,6 +21,16 @@ describe "Sensu::Extension::Check" do
   end
 end
 
+describe "Sensu::Extension::Filter" do
+  include Helpers
+
+  it "inherits Base" do
+    expect(Sensu::Extension::Filter.superclass).to eq(Sensu::Extension::Base)
+    extension = Sensu::Extension::Filter.new
+    expect(extension).to respond_to(:name, :description, :definition, :safe_run, :stop, :has_key?, :[])
+  end
+end
+
 describe "Sensu::Extension::Mutator" do
   include Helpers
 
