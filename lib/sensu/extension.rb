@@ -103,7 +103,7 @@ module Sensu
           run(data_copy, options, &callback)
         rescue => error
           klass = error.class.name
-          backtrace = error.backtrace.map { |x| "\tfrom #{x}" }.join("\n")
+          backtrace = error.backtrace.map { |line| "\s\s#{line}" }.join("\n")
           callback.call("#{klass}: #{error}\n#{backtrace}", 2)
         end
       end
