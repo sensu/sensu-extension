@@ -57,9 +57,11 @@ module Sensu
       # an output string and exit code.
       #
       # @param data [Object, nil] provided by Sensu.
+      # @param options [Hash] provided by Sensu, may contain
+      #   connection objects, eg. redis.
       # @param callback [Proc] provided by Sensu, expecting to be
       #   called with two parameters, an output string and exit code.
-      def run(data=nil, &callback)
+      def run(data=nil, options={}, &callback)
         callback.call("noop", 0)
       end
 
@@ -93,13 +95,15 @@ module Sensu
       # not override this method!
       #
       # @param data [Object, nil) to dup() and pass to run().
+      # @param options [Hash] to pass to run().
       # @param callback [Proc] to pass to run().
-      def safe_run(data=nil, &callback)
+      def safe_run(data=nil, options={}, &callback)
         begin
-          data ? run(data.dup, &callback) : run(&callback)
+          data_copy = data ? data.dup : data
+          run(data_copy, options, &callback)
         rescue => error
           klass = error.class.name
-          backtrace = error.backtrace.map { |x| "\tfrom #{x}" }.join("\n")
+          backtrace = error.backtrace.map { |line| "\s\s#{line}" }.join("\n")
           callback.call("#{klass}: #{error}\n#{backtrace}", 2)
         end
       end

@@ -59,10 +59,35 @@ describe "Sensu::Extension::Base" do
     end
   end
 
+  it "can run with options" do
+    async_wrapper do
+      callback = Proc.new do |output, status|
+        expect(output).to eq("noop")
+        expect(status).to eq(0)
+        async_done
+      end
+      event = {:foo => 1}
+      options = {:test => 1}
+      @extension.run(event, options, &callback)
+    end
+  end
+
   it "can pass duplicated event data to run" do
     async_wrapper do
       event = {:foo => 1}
       @extension.safe_run(event) do |output, status|
+        expect(output).to eq("noop")
+        expect(status).to eq(0)
+        async_done
+      end
+    end
+  end
+
+  it "can pass options to run" do
+    async_wrapper do
+      event = {:foo => 1}
+      options = {:test => 1}
+      @extension.safe_run(event, options) do |output, status|
         expect(output).to eq("noop")
         expect(status).to eq(0)
         async_done
