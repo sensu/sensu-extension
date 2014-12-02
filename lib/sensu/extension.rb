@@ -95,12 +95,15 @@ module Sensu
       # not override this method!
       #
       # @param data [Object, nil) to dup() and pass to run().
-      # @param options [Hash] to pass to run().
+      # @param options [Hash] to pass to run() if it has an arity of 2.
       # @param callback [Proc] to pass to run().
       def safe_run(data=nil, options={}, &callback)
         begin
-          data_copy = data ? data.dup : data
-          run(data_copy, options, &callback)
+          arguments = [data ? data.dup : data]
+          if method(:run).arity == 2
+            arguments << options
+          end
+          run(*arguments, &callback)
         rescue => error
           klass = error.class.name
           backtrace = error.backtrace.map { |line| "\s\s#{line}" }.join("\n")
