@@ -74,7 +74,7 @@ describe "Sensu::Extension::Base" do
     async_wrapper do
       @extension.safe_run do |output, status|
         raise "boom" if status == 0
-        expect(output).to eq("boom")
+        expect(output.split("\n").first).to eq("RuntimeError: boom")
         expect(status).to eq(2)
         async_done
       end
