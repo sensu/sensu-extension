@@ -100,7 +100,7 @@ module Sensu
       def safe_run(data=nil, options={}, &callback)
         begin
           arguments = [data ? data.dup : data]
-          if method(:run).arity == 2
+          if method(:run).arity.abs == 2
             arguments << options
           end
           run(*arguments, &callback)
