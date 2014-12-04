@@ -94,15 +94,17 @@ module Sensu
       # it to ensure the extension doesn't mutate the original. Do
       # not override this method!
       #
-      # @param data [Object, nil) to dup() and pass to run().
-      # @param options [Hash] to pass to run() if it has an arity of 2.
+      # @param data [Object, nil) to dup() and pass to run(), if run()
+      #   has an absolue arity of 1 or more.
+      # @param options [Hash] to pass to run(), if run() has an
+      #   absolute arity of 2.
       # @param callback [Proc] to pass to run().
       def safe_run(data=nil, options={}, &callback)
         begin
-          arguments = [data ? data.dup : data]
-          if method(:run).arity.abs == 2
-            arguments << options
-          end
+          @run_arity ||= method(:run).arity.abs
+          arguments = []
+          arguments << (data ? data.dup : data) if @run_arity >= 1
+          arguments << options if @run_arity == 2
           run(*arguments, &callback)
         rescue => error
           klass = error.class.name
