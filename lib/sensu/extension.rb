@@ -1,5 +1,3 @@
-gem "sensu-em"
-
 require "eventmachine"
 require "sensu/extension/constants"
 
