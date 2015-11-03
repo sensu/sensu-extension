@@ -10,13 +10,14 @@ describe "Sensu::Extension::Base" do
   end
 
   it "can provide the extension API" do
-    expect(@extension).to respond_to(:name, :description, :definition, :safe_run, :has_key?, :[])
+    expect(@extension).to respond_to(:name, :name_alias, :description, :definition, :safe_run, :has_key?, :[])
   end
 
   it "can provide default method return values" do
     expect(@extension.post_init).to be(true)
     expect(@extension.stop).to be(true)
     expect(@extension.name).to eq("base")
+    expect(@extension.name_alias).to eq(nil)
     expect(@extension.description).to eq("extension description (change me)")
     expect(@extension.definition).to eq({:type => "extension", :name => "base"})
   end

@@ -28,6 +28,12 @@ module Sensu
         "base"
       end
 
+      # Override this method to set a name alias for the extension.
+      # The extention can be referenced by the name alias. This method
+      # is used to aid in the transition to the extension from a Sensu
+      # component sharing the same name, e.g. pipe handler.
+      def name_alias; end
+
       # Override this method to set the extension's description.
       def description
         "extension description (change me)"
