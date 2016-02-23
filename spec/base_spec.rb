@@ -39,6 +39,16 @@ describe "Sensu::Extension::Base" do
 
   it "can run without data" do
     async_wrapper do
+      @extension.run do |output, status|
+        expect(output).to eq("noop")
+        expect(status).to eq(0)
+        async_done
+      end
+    end
+  end
+
+  it "can run a proc without data" do
+    async_wrapper do
       callback = Proc.new do |output, status|
         expect(output).to eq("noop")
         expect(status).to eq(0)
@@ -50,26 +60,24 @@ describe "Sensu::Extension::Base" do
 
   it "can run with event data" do
     async_wrapper do
-      callback = Proc.new do |output, status|
+      event = {:foo => 1}
+      @extension.run(event) do |output, status|
         expect(output).to eq("noop")
         expect(status).to eq(0)
         async_done
       end
-      event = {:foo => 1}
-      @extension.run(event, &callback)
     end
   end
 
   it "can run with options" do
     async_wrapper do
-      callback = Proc.new do |output, status|
+      event = {:foo => 1}
+      options = {:test => 1}
+      @extension.run(event, options) do |output, status|
         expect(output).to eq("noop")
         expect(status).to eq(0)
         async_done
       end
-      event = {:foo => 1}
-      options = {:test => 1}
-      @extension.run(event, options, &callback)
     end
   end
 

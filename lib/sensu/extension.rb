@@ -63,10 +63,13 @@ module Sensu
       # @param data [Object, nil] provided by Sensu.
       # @param options [Hash] provided by Sensu, may contain
       #   connection objects, eg. redis.
-      # @param callback [Proc] provided by Sensu, expecting to be
-      #   called with two parameters, an output string and exit code.
-      def run(data=nil, options={}, &callback)
-        callback.call("noop", 0)
+      # @yield [output, status] callback/block provided by Sensu,
+      #   expecting to be called with two parameters, an output string
+      #   and exit status code.
+      # @yieldparam output [String]
+      # @yieldparam status [Integer]
+      def run(data=nil, options={})
+        yield("noop", 0)
       end
 
       # Override this method to do something when the eventmachine
@@ -102,18 +105,24 @@ module Sensu
       #   has an absolue arity of 1 or more.
       # @param options [Hash] to pass to run(), if run() has an
       #   absolute arity of 2.
-      # @param callback [Proc] to pass to run().
-      def safe_run(data=nil, options={}, &callback)
+      # @yield [output, status] callback/block provided by Sensu,
+      #   expecting to be called with two parameters, an output string
+      #   and exit status code.
+      # @yieldparam output [String]
+      # @yieldparam status [Integer]
+      def safe_run(data=nil, options={})
         begin
           @run_arity ||= method(:run).arity.abs
           arguments = []
           arguments << (data ? data.dup : data) if @run_arity >= 1
           arguments << options if @run_arity == 2
-          run(*arguments, &callback)
+          run(*arguments) do |output, status|
+            yield(output, status)
+          end
         rescue => error
           klass = error.class.name
           backtrace = error.backtrace.map { |line| "\s\s#{line}" }.join("\n")
-          callback.call("#{klass}: #{error}\n#{backtrace}", 2)
+          yield("#{klass}: #{error}\n#{backtrace}", 2)
         end
       end
 
