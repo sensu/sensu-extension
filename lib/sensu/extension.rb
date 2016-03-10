@@ -61,14 +61,12 @@ module Sensu
       # an output string and exit code.
       #
       # @param data [Object, nil] provided by Sensu.
-      # @param options [Hash] provided by Sensu, may contain
-      #   connection objects, eg. redis.
       # @yield [output, status] callback/block provided by Sensu,
       #   expecting to be called with two parameters, an output string
       #   and exit status code.
       # @yieldparam output [String]
       # @yieldparam status [Integer]
-      def run(data=nil, options={})
+      def run(data=nil)
         yield("noop", 0)
       end
 
@@ -97,27 +95,28 @@ module Sensu
       end
 
       # Run the extension with a few safeties. This method wraps
-      # run() with a begin;rescue, and duplicates data before passing
-      # it to ensure the extension doesn't mutate the original. Do
-      # not override this method!
+      # run() with a begin;rescue and determines if the extension
+      # utilizes the provided data (i.e. event data). Do not override
+      # this method!
       #
-      # @param data [Object, nil) to dup() and pass to run(), if run()
-      #   has an absolue arity of 1 or more.
-      # @param options [Hash] to pass to run(), if run() has an
-      #   absolute arity of 2.
+      # @param data [Object, nil) to pass to run(), if run() has an
+      #   absolue arity of 1 or more.
       # @yield [output, status] callback/block provided by Sensu,
       #   expecting to be called with two parameters, an output string
       #   and exit status code.
       # @yieldparam output [String]
       # @yieldparam status [Integer]
-      def safe_run(data=nil, options={})
+      def safe_run(data=nil)
         begin
           @run_arity ||= method(:run).arity.abs
-          arguments = []
-          arguments << (data ? data.dup : data) if @run_arity >= 1
-          arguments << options if @run_arity == 2
-          run(*arguments) do |output, status|
-            yield(output, status)
+          if @run_arity >= 1
+            run(data) do |output, status|
+              yield(output, status)
+            end
+          else
+            run do |output, status|
+              yield(output, status)
+            end
           end
         rescue => error
           klass = error.class.name
