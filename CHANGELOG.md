@@ -4,8 +4,14 @@
 
 [Full Changelog](https://github.com/sensu/sensu-extension/compare/v1.5.1...HEAD)
 
+**Closed issues:**
+
+- Handler extensions don't respect stashed checks [\#2](https://github.com/sensu/sensu-extension/issues/2)
+
 **Merged pull requests:**
 
+- Sign the sensu-extension Ruby gem [\#16](https://github.com/sensu/sensu-extension/pull/16) ([portertech](https://github.com/portertech))
+- Implement automated changelog generation [\#15](https://github.com/sensu/sensu-extension/pull/15) ([cwjohnston](https://github.com/cwjohnston))
 - Add ruby 2.4.0 to .travis.yml [\#14](https://github.com/sensu/sensu-extension/pull/14) ([amdprophet](https://github.com/amdprophet))
 
 ## [v1.5.1](https://github.com/sensu/sensu-extension/tree/v1.5.1) (2016-09-12)

@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "sensu-extension"
-  spec.version       = "1.5.1"
+  spec.version       = "1.5.2"
   spec.authors       = ["Sean Porter"]
   spec.email         = ["portertech@gmail.com", "engineering@sensu.io"]
   spec.summary       = "The Sensu extension library"
